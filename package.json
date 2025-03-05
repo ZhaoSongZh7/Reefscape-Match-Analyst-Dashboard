@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "homepage": "https://ZhaoSongZh7.github.io/Reefscape-Operator-Dashboard/",
+  "homepage": "https://ZhaoSongZh7.github.io/Reefscape-Match-Analyst-Dashboard/",
   "private": true,
   "proxy": "http://localhost:5000/",
   "version": "0.0.0",

@@ -16,6 +16,15 @@ export default function CoralTracker({
     setCoOpArray,
     levelOneCount,
     setLevelOneCount,
+    autoLevelFourArray,
+    setAutoLevelFourArray,
+    autoLevelThreeArray,
+    setAutoLevelThreeArray,
+    autoLevelTwoArray,
+    setAutoLevelTwoArray,
+    autoLevelOneCount,
+    setAutoLevelOneCount,
+    isAuto,
 }) {
     const updateCoOpArray = (array, level) => {
         setCoOpArray((prevArray) => {
@@ -35,6 +44,17 @@ export default function CoralTracker({
             return levelThreeArray.filter((selected) => selected).length;
         } else if (level === 4) {
             return levelFourArray.filter((selected) => selected).length;
+        }
+        return 0;
+    };
+
+    const getSelectedCountAuto = (level) => {
+        if (level === 2) {
+            return autoLevelTwoArray.filter((selected) => selected).length;
+        } else if (level === 3) {
+            return autoLevelThreeArray.filter((selected) => selected).length;
+        } else if (level === 4) {
+            return autoLevelFourArray.filter((selected) => selected).length;
         }
         return 0;
     };
@@ -87,7 +107,7 @@ export default function CoralTracker({
                                 : 'transparent',
                     }}
                 >
-                    {getSelectedCount(4 - index) !== 12
+                    {getSelectedCountAuto(4 - index)} | {getSelectedCount(4 - index) !== 12
                         ? getSelectedCount(4 - index)
                         : 'DONE!'}
                 </Button>
@@ -105,11 +125,13 @@ export default function CoralTracker({
                         transform: 'translate(-50%, -50%)',
                     }}
                 >
-                    {levelOneCount}
+                   {autoLevelOneCount} | {levelOneCount}
                 </Box>
                 <Button
                     onClick={() => {
-                        if (levelOneCount != 0) {
+                        if (isAuto && autoLevelOneCount != 0) {
+                            setAutoLevelOneCount(--autoLevelOneCount)
+                        } else if (!isAuto && levelOneCount != 0) {
                             setLevelOneCount(--levelOneCount);
                         }
                     }}
@@ -127,8 +149,11 @@ export default function CoralTracker({
                 </Button>
                 <Button
                     onClick={() => {
-                        setLevelOneCount(++levelOneCount);
-                    }}
+                        if (isAuto) {
+                            setAutoLevelOneCount(++autoLevelOneCount)
+                        } else {
+                            setLevelOneCount(++levelOneCount);
+                        }}}
                     sx={{
                         flex: 0.5,
                         fontSize: '50px',

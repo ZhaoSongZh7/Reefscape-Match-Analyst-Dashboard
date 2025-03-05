@@ -3,7 +3,7 @@ import reef from '../assets/reef.png';
 import coral from '../assets/coral.png';
 import algae from '../assets/algae.png';
 
-import { Box, Button } from '@mui/material';
+import { Box, Button, selectClasses } from '@mui/material';
 
 export default function Reef({
     levelTwoArray,
@@ -16,6 +16,13 @@ export default function Reef({
     setCurrentLevel,
     algaeArray,
     setAlgaeArray,
+    isAuto,
+    autoLevelFourArray,
+    setAutoLevelFourArray,
+    autoLevelThreeArray,
+    setAutoLevelThreeArray,
+    autoLevelTwoArray,
+    setAutoLevelTwoArray,
 }) {
     const coralRadius = 350; // Distance of corals from center
     const algaeRadius = 170; // Algae closer to center
@@ -30,40 +37,59 @@ export default function Reef({
     // const algaeAngles = [330, 270, 210, 150, 90, 30];
     const algaeAngles = [90, 30, 330, 270, 210, 150];
 
-    let levelTwoAlgae = false;
+    // let selectedCoralIsAuto;
 
     // Function to handle coral click
     const handleCoralClick = (index) => {
         let updatedLevelArray;
         let updatedCount;
+        let selectedArray;
+        let setSelectedArray;
+        let mergedArray;
 
         // Update the correct level array based on currentLevel
         if (currentLevel === 2) {
-            updatedLevelArray = [...levelTwoArray];
-            updatedLevelArray[index] = !updatedLevelArray[index];
-            setLevelTwoArray(updatedLevelArray);
-            updatedCount = updatedLevelArray.filter(
-                (selected) => selected
-            ).length;
+            selectedArray = isAuto ? autoLevelTwoArray : levelTwoArray
+            setSelectedArray = isAuto ? setAutoLevelTwoArray : setLevelTwoArray
+            mergedArray = autoLevelTwoArray.map((val, index) => val || levelTwoArray[index]);
         } else if (currentLevel === 3) {
-            updatedLevelArray = [...levelThreeArray];
-            updatedLevelArray[index] = !updatedLevelArray[index];
-            setLevelThreeArray(updatedLevelArray);
-            updatedCount = updatedLevelArray.filter(
-                (selected) => selected
-            ).length;
+            selectedArray = isAuto ? autoLevelThreeArray : levelThreeArray
+            setSelectedArray = isAuto ? setAutoLevelThreeArray : setLevelThreeArray
+            mergedArray = autoLevelThreeArray.map((val, index) => val || levelThreeArray[index]);
         } else if (currentLevel === 4) {
-            updatedLevelArray = [...levelFourArray];
+            selectedArray = isAuto ? autoLevelFourArray : levelFourArray
+            setSelectedArray = isAuto ? setAutoLevelFourArray : setLevelFourArray
+            mergedArray = autoLevelFourArray.map((val, index) => val || levelFourArray[index]);
+        }
+
+        console.log("Merged" + mergedArray[index])
+        console.log("Selected" + selectedArray[index])
+        if (mergedArray[index] === selectedArray[index]) {
+            // if (isAuto) {
+            //     selectedCoralIsAuto = true;
+            // } else {
+            //     selectedCoralIsAuto = false;
+            // }
+            updatedLevelArray = [...selectedArray];
             updatedLevelArray[index] = !updatedLevelArray[index];
-            setLevelFourArray(updatedLevelArray);
+            setSelectedArray(updatedLevelArray);
             updatedCount = updatedLevelArray.filter(
                 (selected) => selected
             ).length;
+        } else {
+            return; // Exit the function early if the coral is already clicked
         }
 
         // Update the count or display the selected corals in the CoralTracker
         console.log(`${updatedCount} corals selected on level ${currentLevel}`);
     };
+
+    // const checkIfAuto = (index, mergedArray, selectedArray) => {
+    //     if (mergedArray[index] === selectedArray[index]) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     const handleAlgaeClick = (index) => {
         let updatedLevelArray;
@@ -92,18 +118,36 @@ export default function Reef({
                 const radian = angle * (Math.PI / 180); // Convert degrees to radians
                 const x = Math.cos(radian) * coralRadius;
                 const y = Math.sin(radian) * coralRadius;
+                const mergedLevelTwoArray = autoLevelTwoArray.map((val, index) => val || levelTwoArray[index]);
+                const mergedLevelThreeArray = autoLevelThreeArray.map((val, index) => val || levelThreeArray[index]);
+                const mergedLevelFourArray = autoLevelFourArray.map((val, index) => val || levelFourArray[index]);
 
-                const isSelected =
-                    currentLevel === 2
-                        ? levelTwoArray[index]
-                        : currentLevel === 3
-                        ? levelThreeArray[index]
-                        : levelFourArray[index];
+                // const isSelected =
+                //     isAuto ?
+                //     (currentLevel === 2
+                        
+                //         ? autoLevelTwoArray[index]
+                //         : currentLevel === 3
+                //         ? autoLevelThreeArray[index]
+                //         : autoLevelFourArray[index])
+                //     : (currentLevel === 2
+                //         ? levelTwoArray[index]
+                //         : currentLevel === 3
+                //         ? levelThreeArray[index]
+                //         : levelFourArray[index])
+
+                        const isSelected =
+                        currentLevel === 2
+                            ? mergedLevelTwoArray[index]
+                            : currentLevel === 3
+                            ? mergedLevelThreeArray[index]
+                            : mergedLevelFourArray[index]
 
                 return (
                     <Button
                         key={`coral-${index}`}
-                        onClick={() => handleCoralClick(index)}
+                        onClick={() => {
+                            handleCoralClick(index)}}
                         sx={{
                             borderRadius: '50%',
                             position: 'absolute',
@@ -112,7 +156,11 @@ export default function Reef({
                             transform: 'translate(-50%, -50%)',
                             border: 2,
                             borderColor: 'black',
-                            bgcolor: isSelected ? 'crimson' : 'limegreen',
+                            bgcolor: isSelected
+                            ? isAuto
+                                ? 'yellow' // Auto mode (yellow)
+                                : 'crimson' // Teleop mode (crimson)
+                            : 'limegreen', // Default color if not selected
                         }}
                     >
                         <img src={coral} width={110} height={110} />

@@ -41,8 +41,6 @@ function App() {
         };
     }, []);
 
-    const [override, setOverride] = useState(false);
-
     function getDataFromServer() {
         axios({
             method: 'GET',
@@ -180,6 +178,57 @@ function App() {
 
     const [open, setOpen] = useLocalStorage('resetDialog', false);
 
+    const [isAuto, setIsAuto] = useLocalStorage('isAuto', false);
+    
+    const [autoLevelFourArray, setAutoLevelFourArray] = useLocalStorage('autoLevelFourArray', [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+    ]);
+
+    const [autoLevelThreeArray, setAutoLevelThreeArray] = useLocalStorage('autoLevelThreeArray', [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+    ]);
+
+    const [autoLevelTwoArray, setAutoLevelTwoArray] = useLocalStorage('autoLevelTwoArray', [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+    ]);
+
+    const [autoLevelOneCount, setAutoLevelOneCount] = useLocalStorage('autoLevelOneCount', 0);
+
+    const [totalScore, setTotalScore] = useLocalStorage('totalScore', 0);
+
     const sendDataToServer = useCallback(async () => {
         try {
             const response = await axios.post('http://127.0.0.1:5000/update', {
@@ -187,14 +236,13 @@ function App() {
                 levelThreeArray,
                 levelFourArray,
                 algaeArray,
-                override,
             });
 
             console.log('Response from server:', response.data);
         } catch (error) {
             console.error('Error sending data to server:', error);
         }
-    }, [levelTwoArray, levelThreeArray, levelFourArray, algaeArray, override]);
+    }, [levelTwoArray, levelThreeArray, levelFourArray, algaeArray]);
 
     const obtainedCoralRP = () => {
         let levelsDone = coOpArray.filter((selected) => selected).length;
@@ -228,6 +276,7 @@ function App() {
 
     const resetStates = () => {
         setLevelOneCount(0);
+        setAutoLevelOneCount(0);
         setLevelTwoArray([
             false,
             false,
@@ -242,6 +291,7 @@ function App() {
             false,
             false,
         ]);
+
         setLevelThreeArray([
             false,
             false,
@@ -256,6 +306,7 @@ function App() {
             false,
             false,
         ]);
+
         setLevelFourArray([
             false,
             false,
@@ -270,6 +321,52 @@ function App() {
             false,
             false,
         ]);
+
+        setAutoLevelTwoArray([
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+        ]);
+        
+        setAutoLevelThreeArray([
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+        ]);
+
+        setAutoLevelFourArray([
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+        ]);
+
         setAlgaeArray([false, false, false, false, false, false]);
     };
 
@@ -303,10 +400,10 @@ function App() {
                         <Box
                             sx={{
                                 padding: '8px 15px 8px 15px',
-                                fontSize: '55px',
+                                fontSize: '50px',
                             }}
                         >
-                            Current Level: {currentLevel}
+                            Current Level: {currentLevel} Total Score: {totalScore}
                         </Box>
                     </Item>
                     <CoralTracker
@@ -323,6 +420,15 @@ function App() {
                         setCurrentLevel={setCurrentLevel}
                         coOpArray={coOpArray}
                         setCoOpArray={setCoOpArray}
+                        isAuto={isAuto}
+                        autoLevelFourArray={autoLevelFourArray}
+                        setAutoLevelFourArray={setAutoLevelFourArray}
+                        autoLevelThreeArray={autoLevelThreeArray}
+                        setAutoLevelThreeArray={setAutoLevelThreeArray}
+                        autoLevelTwoArray={autoLevelTwoArray}
+                        setAutoLevelTwoArray={setAutoLevelTwoArray}
+                        autoLevelOneCount={autoLevelOneCount}
+                        setAutoLevelOneCount={setAutoLevelOneCount}
                     />
                 </Box>
                 <Box
@@ -369,30 +475,35 @@ function App() {
                         setAlgaeArray={setAlgaeArray}
                         coOpArray={coOpArray}
                         setCoOpArray={setCoOpArray}
+                        autoLevelFourArray={autoLevelFourArray}
+                        setAutoLevelFourArray={setAutoLevelFourArray}
+                        autoLevelThreeArray={autoLevelThreeArray}
+                        setAutoLevelThreeArray={setAutoLevelThreeArray}
+                        autoLevelTwoArray={autoLevelTwoArray}
+                        setAutoLevelTwoArray={setAutoLevelTwoArray}
+                        autoLevelOneCount={autoLevelOneCount}
+                        setAutoLevelOneCount={setAutoLevelOneCount}
+                        isAuto={isAuto}
                     />
                     <Button
                         sx={{
                             position: 'absolute',
                             bottom: 0,
                             fontSize: '40px',
-                            border: override
-                                ? '1px solid crimson'
+                            padding: '5px 20px 5px 20px',
+                            border: isAuto
+                                ? '1px solid black'
                                 : '1px solid dodgerblue',
-                            backgroundColor: override
-                                ? 'crimson'
+                            backgroundColor: isAuto
+                                ? 'dodgerblue'
                                 : 'transparent',
-                                color: override
+                                color: isAuto
                                 ? 'white'
                                 : 'dodgerblue',
                         }}
-                        onTouchStart={() => {
-                            setOverride(true);
-                        }}
-                        onTouchEnd={() => {
-                            setOverride(false);
-                        }}
+                        onClick={() => setIsAuto(!isAuto)}
                     >
-                        Override
+                        MODE: {isAuto ? "AUTO" : "TELEOP"}
                     </Button>
                 </Box>
                 <Box
