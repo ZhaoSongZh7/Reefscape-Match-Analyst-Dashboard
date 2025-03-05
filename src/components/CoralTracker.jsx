@@ -25,7 +25,10 @@ export default function CoralTracker({
     autoLevelOneCount,
     setAutoLevelOneCount,
     isAuto,
+    totalScore,
+    setTotalScore
 }) {
+
     const updateCoOpArray = (array, level) => {
         setCoOpArray((prevArray) => {
             const updatedArray = [...prevArray];
@@ -58,6 +61,17 @@ export default function CoralTracker({
         }
         return 0;
     };
+
+    const getSelectedCountArray = (array) => {
+        return array.filter((selected) => selected).length;
+    }
+
+    useEffect(() => {
+        setTotalScore(autoLevelOneCount * 3 + levelOneCount * 2 + getSelectedCountArray(autoLevelFourArray) * 7 + getSelectedCountArray(levelFourArray) * 5 +
+        getSelectedCountArray(autoLevelThreeArray) * 6 + getSelectedCountArray(levelThreeArray) * 4 +
+        getSelectedCountArray(autoLevelTwoArray) * 4 + getSelectedCountArray(levelTwoArray) * 3)
+    }, [autoLevelFourArray, autoLevelThreeArray, autoLevelTwoArray, autoLevelOneCount, levelFourArray, levelThreeArray, levelTwoArray, levelOneCount])
+
 
     useEffect(() => {
         updateCoOpArray(levelTwoArray, 2);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import reef from '../assets/reef.png';
 import coral from '../assets/coral.png';
 import algae from '../assets/algae.png';
@@ -23,7 +23,10 @@ export default function Reef({
     setAutoLevelThreeArray,
     autoLevelTwoArray,
     setAutoLevelTwoArray,
+    totalScore,
+    setTotalScore
 }) {
+
     const coralRadius = 350; // Distance of corals from center
     const algaeRadius = 170; // Algae closer to center
 
@@ -70,6 +73,7 @@ export default function Reef({
             // } else {
             //     selectedCoralIsAuto = false;
             // }
+            
             updatedLevelArray = [...selectedArray];
             updatedLevelArray[index] = !updatedLevelArray[index];
             setSelectedArray(updatedLevelArray);
@@ -79,9 +83,9 @@ export default function Reef({
         } else {
             return; // Exit the function early if the coral is already clicked
         }
-
+        
         // Update the count or display the selected corals in the CoralTracker
-        console.log(`${updatedCount} corals selected on level ${currentLevel}`);
+        // console.log(`${updatedCount} corals selected on level ${currentLevel}`);
     };
 
     // const checkIfAuto = (index, mergedArray, selectedArray) => {

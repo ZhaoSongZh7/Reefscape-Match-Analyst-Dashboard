@@ -429,6 +429,8 @@ function App() {
                         setAutoLevelTwoArray={setAutoLevelTwoArray}
                         autoLevelOneCount={autoLevelOneCount}
                         setAutoLevelOneCount={setAutoLevelOneCount}
+                        totalScore={totalScore}
+                        setTotalScore={setTotalScore}
                     />
                 </Box>
                 <Box
@@ -484,6 +486,8 @@ function App() {
                         autoLevelOneCount={autoLevelOneCount}
                         setAutoLevelOneCount={setAutoLevelOneCount}
                         isAuto={isAuto}
+                        totalScore={totalScore}
+                        setTotalScore={setTotalScore}
                     />
                     <Button
                         sx={{
