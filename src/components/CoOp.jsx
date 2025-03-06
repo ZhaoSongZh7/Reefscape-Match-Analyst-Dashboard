@@ -4,19 +4,15 @@ import notCoop from '../assets/not-coop.png';
 import coOp from '../assets/coop.png';
 
 export default function CoOp({
-    useLocalStorage,
     Item,
     coOpArray,
     setCoOpArray,
     levelTwoArray,
     levelThreeArray,
     levelFourArray,
+    coopertition,
+    setCoopertition
 }) {
-    const [coopertition, setCoopertition] = useLocalStorage(
-        'Coopertition',
-        false
-    );
-
     const handleCoopClick = () => {
         setCoopertition(!coopertition);
     };

@@ -86,67 +86,67 @@ function App() {
         ...theme.applyStyles('dark', {
             backgroundColor: '#1A2027',
         }),
+        boxShadow: 'none'
     }));
 
     const [levelOneCount, setLevelOneCount] = useLocalStorage(
         'levelOneCount',
         0
     );
+
+    const [autoLevelOneCount, setAutoLevelOneCount] = useLocalStorage(
+        'autoLevelOneCount',
+        0
+    );
+
     const [levelTwoArray, setLevelTwoArray] = useLocalStorage('levelTwoArray', [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
     ]);
     const [levelThreeArray, setLevelThreeArray] = useLocalStorage(
         'levelThreeArray',
         [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
         ]
     );
     const [levelFourArray, setLevelFourArray] = useLocalStorage(
         'levelFourArray',
         [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
         ]
     );
-
-    const [coOpArray, setCoOpArray] = useLocalStorage('coOpArray', [
-        false,
-        false,
-        false,
-        false,
-    ]);
 
     const [coopertition, setCoopertition] = useLocalStorage(
         'Coopertition',
@@ -157,12 +157,12 @@ function App() {
     const [dsSeconds, setDsSeconds] = useLocalStorage('dsSeconds', 0);
 
     const [algaeArray, setAlgaeArray] = useLocalStorage('algaeArray', [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
+        { val: false, isAuto: false },
     ]);
 
     const [currentLevel, setCurrentLevel] = useLocalStorage('currentLevel', 4);
@@ -179,55 +179,6 @@ function App() {
     const [open, setOpen] = useLocalStorage('resetDialog', false);
 
     const [isAuto, setIsAuto] = useLocalStorage('isAuto', false);
-    
-    const [autoLevelFourArray, setAutoLevelFourArray] = useLocalStorage('autoLevelFourArray', [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-    ]);
-
-    const [autoLevelThreeArray, setAutoLevelThreeArray] = useLocalStorage('autoLevelThreeArray', [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-    ]);
-
-    const [autoLevelTwoArray, setAutoLevelTwoArray] = useLocalStorage('autoLevelTwoArray', [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-    ]);
-
-    const [autoLevelOneCount, setAutoLevelOneCount] = useLocalStorage('autoLevelOneCount', 0);
-
-    const [totalScore, setTotalScore] = useLocalStorage('totalScore', 0);
 
     const sendDataToServer = useCallback(async () => {
         try {
@@ -245,7 +196,21 @@ function App() {
     }, [levelTwoArray, levelThreeArray, levelFourArray, algaeArray]);
 
     const obtainedCoralRP = () => {
-        let levelsDone = coOpArray.filter((selected) => selected).length;
+        let levelsDone = 0;
+        if (levelFourArray.filter((e) => e.val).length >= 5) {
+            levelsDone += 1;
+        }
+        if (levelThreeArray.filter((e) => e.val).length >= 5) {
+            levelsDone += 1;
+        }
+        if (levelTwoArray.filter((e) => e.val).length >= 5) {
+            levelsDone += 1;
+        }
+        if (levelOneCount + autoLevelOneCount >= 5) {
+            levelsDone += 1;
+        }
+
+        console.log(autoLevelOneCount);
 
         if (coopertition && levelsDone >= 3) {
             return true;
@@ -277,97 +242,83 @@ function App() {
     const resetStates = () => {
         setLevelOneCount(0);
         setAutoLevelOneCount(0);
+        setIsAuto(true);
         setLevelTwoArray([
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
         ]);
 
         setLevelThreeArray([
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
         ]);
 
         setLevelFourArray([
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
         ]);
 
-        setAutoLevelTwoArray([
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+        setAlgaeArray([
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
+            { val: false, isAuto: false },
         ]);
-        
-        setAutoLevelThreeArray([
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-        ]);
+    };
 
-        setAutoLevelFourArray([
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-        ]);
+    const getSelectedCountArray = (array) => {
+        return array.filter((selected) => selected.val && !selected.isAuto)
+            .length;
+    };
 
-        setAlgaeArray([false, false, false, false, false, false]);
+    const getAutoSelectedCountArray = (array) => {
+        return array.filter((selected) => selected.val && selected.isAuto)
+            .length;
+    };
+
+    const getTotalScore = () => {
+        return (
+            autoLevelOneCount * 3 +
+            levelOneCount * 2 +
+            getAutoSelectedCountArray(levelFourArray) * 7 +
+            getSelectedCountArray(levelFourArray) * 5 +
+            getAutoSelectedCountArray(levelThreeArray) * 6 +
+            getSelectedCountArray(levelThreeArray) * 4 +
+            getAutoSelectedCountArray(levelTwoArray) * 4 +
+            getSelectedCountArray(levelTwoArray) * 3
+        );
     };
 
     return (
@@ -403,34 +354,20 @@ function App() {
                                 fontSize: '50px',
                             }}
                         >
-                            Current Level: {currentLevel} Total Score: {totalScore}
+                            Current Level: {currentLevel}
                         </Box>
                     </Item>
                     <CoralTracker
-                        useLocalStorage={useLocalStorage}
                         levelOneCount={levelOneCount}
                         setLevelOneCount={setLevelOneCount}
                         levelTwoArray={levelTwoArray}
-                        setLevelTwoArray={setLevelTwoArray}
                         levelThreeArray={levelThreeArray}
-                        setLevelThreeArray={setLevelThreeArray}
                         levelFourArray={levelFourArray}
-                        setLevelFourArray={setLevelFourArray}
                         currentLevel={currentLevel}
                         setCurrentLevel={setCurrentLevel}
-                        coOpArray={coOpArray}
-                        setCoOpArray={setCoOpArray}
                         isAuto={isAuto}
-                        autoLevelFourArray={autoLevelFourArray}
-                        setAutoLevelFourArray={setAutoLevelFourArray}
-                        autoLevelThreeArray={autoLevelThreeArray}
-                        setAutoLevelThreeArray={setAutoLevelThreeArray}
-                        autoLevelTwoArray={autoLevelTwoArray}
-                        setAutoLevelTwoArray={setAutoLevelTwoArray}
                         autoLevelOneCount={autoLevelOneCount}
                         setAutoLevelOneCount={setAutoLevelOneCount}
-                        totalScore={totalScore}
-                        setTotalScore={setTotalScore}
                     />
                 </Box>
                 <Box
@@ -445,24 +382,13 @@ function App() {
                     <Item
                         sx={{
                             fontSize: '40px',
-                            border: 1,
                             padding: '12px 22px',
-                            color:
-                                dsMinutes <= 0 && dsSeconds <= 20
-                                    ? 'white'
-                                    : dsMinutes < 1
-                                    ? 'black'
-                                    : 'white',
-                            bgcolor:
-                                dsMinutes <= 0 && dsSeconds <= 20
-                                    ? 'crimson'
-                                    : dsMinutes < 1
-                                    ? 'yellow'
-                                    : 'green',
+                            bgcolor: 'transparent',
+                            border: '1px solid black',
                             userSelect: 'none',
                         }}
                     >
-                        DS Time: {dsMinutes}m {dsSeconds}s
+                        Total Score: {getTotalScore()}
                     </Item>
                     <Reef
                         levelTwoArray={levelTwoArray}
@@ -475,19 +401,7 @@ function App() {
                         setCurrentLevel={setCurrentLevel}
                         algaeArray={algaeArray}
                         setAlgaeArray={setAlgaeArray}
-                        coOpArray={coOpArray}
-                        setCoOpArray={setCoOpArray}
-                        autoLevelFourArray={autoLevelFourArray}
-                        setAutoLevelFourArray={setAutoLevelFourArray}
-                        autoLevelThreeArray={autoLevelThreeArray}
-                        setAutoLevelThreeArray={setAutoLevelThreeArray}
-                        autoLevelTwoArray={autoLevelTwoArray}
-                        setAutoLevelTwoArray={setAutoLevelTwoArray}
-                        autoLevelOneCount={autoLevelOneCount}
-                        setAutoLevelOneCount={setAutoLevelOneCount}
                         isAuto={isAuto}
-                        totalScore={totalScore}
-                        setTotalScore={setTotalScore}
                     />
                     <Button
                         sx={{
@@ -495,19 +409,14 @@ function App() {
                             bottom: 0,
                             fontSize: '40px',
                             padding: '5px 20px 5px 20px',
-                            border: isAuto
-                                ? '1px solid black'
-                                : '1px solid dodgerblue',
                             backgroundColor: isAuto
-                                ? 'dodgerblue'
-                                : 'transparent',
-                                color: isAuto
-                                ? 'white'
-                                : 'dodgerblue',
+                                ? 'gold'
+                                : 'blueviolet',
+                            color: isAuto ? 'black' : 'white',
                         }}
                         onClick={() => setIsAuto(!isAuto)}
                     >
-                        MODE: {isAuto ? "AUTO" : "TELEOP"}
+                        MODE: {isAuto ? 'AUTO' : 'TELEOP'}
                     </Button>
                 </Box>
                 <Box
@@ -534,13 +443,12 @@ function App() {
                         </Box>
                     </Item>
                     <CoOp
-                        useLocalStorage={useLocalStorage}
                         Item={Item}
                         levelTwoArray={levelTwoArray}
                         levelThreeArray={levelThreeArray}
                         levelFourArray={levelFourArray}
-                        coOpArray={coOpArray}
-                        setCoOpArray={setCoOpArray}
+                        coopertition={coopertition}
+                        setCoopertition={setCoopertition}
                     />
                     <Box
                         sx={{

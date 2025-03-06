@@ -1,93 +1,55 @@
 import { Box, Button } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 export default function CoralTracker({
     levelTwoArray,
-    setLevelTwoArray,
     levelThreeArray,
-    setLevelThreeArray,
     levelFourArray,
-    setLevelFourArray,
     currentLevel,
     setCurrentLevel,
-    useLocalStorage,
-    coOpArray,
-    setCoOpArray,
     levelOneCount,
     setLevelOneCount,
-    autoLevelFourArray,
-    setAutoLevelFourArray,
-    autoLevelThreeArray,
-    setAutoLevelThreeArray,
-    autoLevelTwoArray,
-    setAutoLevelTwoArray,
     autoLevelOneCount,
     setAutoLevelOneCount,
     isAuto,
-    totalScore,
-    setTotalScore
 }) {
-
-    const updateCoOpArray = (array, level) => {
-        setCoOpArray((prevArray) => {
-            const updatedArray = [...prevArray];
-            updatedArray[level - 1] =
-                level === 1
-                    ? levelOneCount >= 5
-                    : array.filter((selected) => selected).length >= 5;
-            return updatedArray;
-        });
-    };
-
     const getSelectedCount = (level) => {
         if (level === 2) {
-            return levelTwoArray.filter((selected) => selected).length;
+            return levelTwoArray.filter(
+                (selected) => selected.val && !selected.isAuto
+            ).length;
         } else if (level === 3) {
-            return levelThreeArray.filter((selected) => selected).length;
+            return levelThreeArray.filter(
+                (selected) => selected.val && !selected.isAuto
+            ).length;
         } else if (level === 4) {
-            return levelFourArray.filter((selected) => selected).length;
+            return levelFourArray.filter(
+                (selected) => selected.val && !selected.isAuto
+            ).length;
         }
         return 0;
     };
 
     const getSelectedCountAuto = (level) => {
         if (level === 2) {
-            return autoLevelTwoArray.filter((selected) => selected).length;
+            return levelTwoArray.filter(
+                (selected) => selected.val && selected.isAuto
+            ).length;
         } else if (level === 3) {
-            return autoLevelThreeArray.filter((selected) => selected).length;
+            return levelThreeArray.filter(
+                (selected) => selected.val && selected.isAuto
+            ).length;
         } else if (level === 4) {
-            return autoLevelFourArray.filter((selected) => selected).length;
+            return levelFourArray.filter(
+                (selected) => selected.val && selected.isAuto
+            ).length;
         }
         return 0;
     };
 
     const getSelectedCountArray = (array) => {
         return array.filter((selected) => selected).length;
-    }
-
-    useEffect(() => {
-        setTotalScore(autoLevelOneCount * 3 + levelOneCount * 2 + getSelectedCountArray(autoLevelFourArray) * 7 + getSelectedCountArray(levelFourArray) * 5 +
-        getSelectedCountArray(autoLevelThreeArray) * 6 + getSelectedCountArray(levelThreeArray) * 4 +
-        getSelectedCountArray(autoLevelTwoArray) * 4 + getSelectedCountArray(levelTwoArray) * 3)
-    }, [autoLevelFourArray, autoLevelThreeArray, autoLevelTwoArray, autoLevelOneCount, levelFourArray, levelThreeArray, levelTwoArray, levelOneCount])
-
-
-    useEffect(() => {
-        updateCoOpArray(levelTwoArray, 2);
-    }, [levelTwoArray]);
-
-    useEffect(() => {
-        updateCoOpArray(levelThreeArray, 3);
-    }, [levelThreeArray]);
-
-    useEffect(() => {
-        updateCoOpArray(levelFourArray, 4);
-    }, [levelFourArray]);
-
-    useEffect(() => {
-        updateCoOpArray(coOpArray, 1);
-    }, [levelOneCount]);
+    };
 
     return (
         <>
@@ -99,7 +61,7 @@ export default function CoralTracker({
                     }}
                     sx={{
                         flex: 1,
-                        fontSize: '50px',
+                        fontSize: '40px',
                         fontWeight: 'bold',
                         borderRadius: '10px',
                         borderColor: 'black',
@@ -121,30 +83,38 @@ export default function CoralTracker({
                                 : 'transparent',
                     }}
                 >
-                    {getSelectedCountAuto(4 - index)} | {getSelectedCount(4 - index) !== 12
+                    Auto: {getSelectedCountAuto(4 - index)}
+                    <br></br>
+                    Teleop: {getSelectedCount(4 - index) !== 12
                         ? getSelectedCount(4 - index)
                         : 'DONE!'}
                 </Button>
             ))}
-            <Box position={'relative'} sx={{ display: 'flex', flex: 1, userSelect: 'none' }}>
+            <Box
+                position={'relative'}
+                sx={{ display: 'flex', flex: 1, userSelect: 'none' }}
+            >
                 <Box
                     sx={{
                         fontWeight: 'bold',
                         color: 'limegreen',
-                        fontSize: '50px',
+                        fontSize: '40px',
                         fontFamily: 'Roboto',
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
+                        textAlign: 'center'
                     }}
                 >
-                   {autoLevelOneCount} | {levelOneCount}
+                    AUTO: {autoLevelOneCount}
+                    <Box sx={{marginY: '20px'}}></Box>
+                    TELEOP: {levelOneCount}
                 </Box>
                 <Button
                     onClick={() => {
                         if (isAuto && autoLevelOneCount != 0) {
-                            setAutoLevelOneCount(--autoLevelOneCount)
+                            setAutoLevelOneCount(--autoLevelOneCount);
                         } else if (!isAuto && levelOneCount != 0) {
                             setLevelOneCount(--levelOneCount);
                         }
@@ -164,10 +134,11 @@ export default function CoralTracker({
                 <Button
                     onClick={() => {
                         if (isAuto) {
-                            setAutoLevelOneCount(++autoLevelOneCount)
+                            setAutoLevelOneCount(++autoLevelOneCount);
                         } else {
                             setLevelOneCount(++levelOneCount);
-                        }}}
+                        }
+                    }}
                     sx={{
                         flex: 0.5,
                         fontSize: '50px',
@@ -175,23 +146,12 @@ export default function CoralTracker({
                         color: 'limegreen',
                         borderRadius: '0px 10px 10px 0px',
                         border: 1,
-                        borderLeft: 0
+                        borderLeft: 0,
                     }}
                 >
                     +
                 </Button>
             </Box>
-            {/* <Grid container justifyContent={"space-around"}>
-          <Grid position={"relative"}>
-            <Box sx={{ width: "100%", height: "100%", fontWeight: "bold", color: "limegreen", fontSize: "50px", fontFamily: "Roboto", position: "absolute", top: "35%" }}>{levelOneCount}</Box>
-            <Button onClick={() => { if (levelOneCount != 0) { setLevelOneCount(--levelOneCount) } }} sx={{ width: "200px", height: "100%", fontWeight: "bold", color: "limegreen", fontSize: "50px", borderRadius: "10px 0 0 10px", borderColor: "black", border: 1, borderRight: 0 }}>
-              -
-            </Button>
-            <Button onClick={() => { setLevelOneCount(++levelOneCount) }} sx={{ width: "200px", height: "100%", fontWeight: "bold", color: "limegreen", fontSize: "50px", borderRadius: "0 10px 10px 0", borderColor: "black", border: 1, borderLeft: 0 }}>
-              +
-            </Button>
-          </Grid>
-        </Grid> */}
         </>
     );
 }
